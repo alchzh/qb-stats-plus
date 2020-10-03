@@ -1,11 +1,9 @@
 const path = require('path');
 const SizePlugin = require('size-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-	devtool: 'source-map',
 	stats: 'errors-only',
 	entry: {
 		background: './src/scripts/background',
@@ -47,6 +45,9 @@ module.exports = {
 			},
 			{
 				from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
+			},
+			{
+				from: 'node_modules/dompurify/dist/purify.min.js'
 			}
 		]),
 		new MiniCssExtractPlugin({
@@ -61,18 +62,6 @@ module.exports = {
 			}
 		}
 	],
-	optimization: {
-		minimizer: [
-			new TerserPlugin({
-				terserOptions: {
-					mangle: false,
-					compress: false,
-					output: {
-						beautify: true,
-						indent_level: 2 // eslint-disable-line camelcase
-					}
-				}
-			})
-		]
-	}
+	node: false,
+	target: 'web'
 };

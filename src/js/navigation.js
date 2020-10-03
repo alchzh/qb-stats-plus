@@ -3,6 +3,7 @@ import {scrollToHashIn, populateScrollOffsets} from './scrolling';
 import updateActive from './update-active';
 import {HSQUIZBOWL_URL_REGEX} from './patterns';
 import {LOCAL} from './mode';
+import {stripHash, splitURL} from './url-tools';
 
 export function mapLinks(links) {
 	return new Map(
@@ -19,15 +20,8 @@ export function reportIDFromHREF(href) {
 	return href?.match?.(HSQUIZBOWL_URL_REGEX)?.[2];
 }
 
-export function stripHash(href) {
-	const url = new URL(href.href ?? href, document.baseURI);
-	const hash = url.hash.trim();
-	url.hash = '';
-	return {url, hash};
-}
-
 export function getPageOfHREF(href) {
-	return location.pageURLMap.get(stripHash(href).url?.href);
+	return location.pageURLMap.get(stripHash(href));
 }
 
 export const location = {
@@ -85,7 +79,7 @@ export async function navigate(to, pageURLMap, isReport) {
 		url = new URL(`${match[1]}/stats/${to}/${match[3]}`);
 		hash = window.location.hash;
 	} else {
-		({url, hash} = stripHash(to));
+		({url, hash} = splitURL(to));
 	}
 
 	const mainContent = document.querySelector('#main-content');

@@ -1,10 +1,9 @@
+/* global html */
+// eslint-disable-next-line no-unused-vars
 import h from 'vhtml';
-import htm from 'htm';
 import el from './html-to-element';
 
 import {addTableSort} from './add-table-sort';
-
-const html = htm.bind(h);
 
 export default async function transformTable(table, withHeader, sortMode) {
 	if (table.classList.contains('phaseLegend')) {

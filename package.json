@@ -1,7 +1,7 @@
 {
 	"private": true,
 	"scripts": {
-		"build": "webpack --mode=production",
+		"build": "webpack --config webpack.prod.js",
 		"lint": "run-p lint:*",
 		"lint-fix": "run-p \"lint:* -- --fix\"",
 		"lint:css": "stylelint src/**/*.css",
@@ -16,7 +16,7 @@
 		"start": "run-p watch serve",
 		"test": "run-s lint:* build",
 		"version": "dot-json dist/manifest.json version $VER",
-		"watch": "webpack --mode=development --watch"
+		"watch": "webpack --config webpack.dev.js --watch"
 	},
 	"xo": {
 		"envs": [
@@ -44,8 +44,9 @@
 	},
 	"dependencies": {
 		"bulma": "^0.9.1",
+		"dompurify": "^2.1.1",
 		"htm": "^3.0.4",
-		"lodash.debounce": "^4.0.8",
+		"javascript-debounce": "^1.0.1",
 		"tablesort": "^5.2.1",
 		"vhtml": "^2.2.0",
 		"webext-options-sync": "^0.21.2",
@@ -81,6 +82,10 @@
 		"web-ext-submit": "^4.1.0",
 		"webpack": "^4.44.2",
 		"webpack-cli": "^3.3.6",
+		"webpack-merge": "^5.1.4",
 		"xo": "^0.33.1"
-	}
+	},
+	"sideEffects": [
+		"./src/js/add-table-sort.js"
+	]
 }

@@ -1,12 +1,13 @@
-import debounce from 'lodash.debounce';
+import debounce from 'javascript-debounce';
 
 import generateReportMap from '../js/generate-report-map';
 import mutateContent from '../js/mutate-content';
 
 import {MODE} from '../js/mode';
 import {scrollToHashIn, populateScrollOffsets, updateHashOnScroll} from '../js/scrolling';
-import {_pageCache, navigate, stripHash, location} from '../js/navigation';
+import {_pageCache, navigate, location} from '../js/navigation';
 import updateActive from '../js/update-active';
+import {splitURL} from '../js/url-tools';
 
 (async function () {
 	if (window.__qbstatsplus) {
@@ -15,13 +16,14 @@ import updateActive from '../js/update-active';
 
 	window.__qbstatsplus = true;
 
+	browser.runtime.sendMessage({executeScript: {file: 'purify.min.js'}});
 	browser.runtime.sendMessage({insertCSS: {file: 'statsplus.css', cssOrigin: 'author'}});
 
 	if (MODE === 'hsquizbowl') {
 		location.reportMap = await generateReportMap(document.querySelector('.SQBSHeader'));
 	}
 
-	const {url, hash} = stripHash(window.location.href);
+	const {url, hash} = splitURL(window.location.href);
 	mutateContent(document, true, url.href)
 		.then(mainContent => {
 			if (hash) {

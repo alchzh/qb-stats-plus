@@ -1,5 +1,5 @@
+/* global DOMPurify */
+
 export default function htmlToElement(html) {
-	const template = document.createElement('template');
-	template.innerHTML = html;
-	return template.content.firstChild;
+	return DOMPurify.sanitize(html, {RETURN_DOM_FRAGMENT: true, RETURN_DOM_IMPORT: true}).firstElementChild;
 }

@@ -22,6 +22,17 @@ export function removeHeadings(element) {
 	element.querySelectorAll('h2, h3, h4, h5, h6').forEach(hn => hn.remove());
 }
 
+// DOM helpers
+function empty(parent) {
+	while (parent.hasChildNodes()) {
+		parent.firstChild.remove();
+	}	
+}
+
+function addAllFrom (parent, nodeList) {
+	nodeList.forEach(node => parent.append(node.cloneNode(true)))
+}
+
 export function addMergeUnmerge(mainContent) {
 	const containers = mainContent.querySelectorAll('div.table-container');
 	if (containers.length > 1) {
@@ -34,18 +45,22 @@ export function addMergeUnmerge(mainContent) {
 		}
 
 		let isMerged = false;
-		let mergedHTML;
-		const unmergedHTML = mainContent.innerHTML;
+		let states = {
+			merged: null,
+			unmerged: mainContent.cloneNode(true).childNodes
+		}
 
 		// eslint-disable-next-line no-inner-declarations
 		function buttonClick(event) {
 			if (isMerged) {
-				console.log('Using found unmerged HTML');
-				mainContent.innerHTML = unmergedHTML;
+				console.log('Using found unmerged');
+				empty(mainContent);
+				addAllFrom(mainContent, states.unmerged);
 				isMerged = false;
-			} else if (mergedHTML) {
-				console.log('Using found merged HTML');
-				mainContent.innerHTML = mergedHTML;
+			} else if (states.merged) {
+				console.log('Using found merged');
+				empty(mainContent);
+				addAllFrom(mainContent, states.merged);
 				isMerged = true;
 			} else {
 				try {
@@ -58,7 +73,7 @@ export function addMergeUnmerge(mainContent) {
 
 				event.target.innerHTML = 'Unmerge';
 
-				mergedHTML = mainContent.innerHTML;
+				states.merged = mainContent.cloneNode(true).childNodes;
 				isMerged = true;
 			}
 

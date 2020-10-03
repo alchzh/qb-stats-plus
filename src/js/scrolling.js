@@ -1,4 +1,4 @@
-import {stripHash} from './navigation';
+import {stripHash} from './url-tools';
 
 export function scrollToHashIn(hash, element) {
 	if (hash.length > 1) {
@@ -69,6 +69,6 @@ export function updateHashOnScroll() {
 	}
 
 	if (last && last[0] > window.pageYOffset - (0.5 * document.documentElement.clientHeight)) {
-		history.replaceState(history.state, null, stripHash(window.location.href).url.href + '#' + last[1]);
+		history.replaceState(history.state, null, stripHash(window.location.href) + '#' + last[1]);
 	}
 }
