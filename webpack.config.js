@@ -43,7 +43,7 @@ module.exports = {
 			{
 				from: '**/*',
 				context: 'src',
-				ignore: ['*.js', '*.svg', '*.css', 'jsconfig.json']
+				ignore: ['*.js', '*.svg', 'styles/*', 'jsconfig.json']
 			},
 			{
 				from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
