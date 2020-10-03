@@ -1,6 +1,6 @@
 {
 	"name": "QB Stats+",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "An extension that adds styling and additional functionality to Quizbowl stats pages (SQBS or YFT)",
 	"homepage_url": "https://github.com/alchzh/qb-stats-plus",
 	"manifest_version": 2,
