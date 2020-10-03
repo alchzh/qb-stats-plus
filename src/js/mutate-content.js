@@ -5,7 +5,7 @@ import transformTable from '../js/transform-table';
 import el from "./html-to-element";
 import htm from 'htm';
 
-import { navigate, location, _pageCache } from './navigation';
+import { navigate, location, _pageCache, reportIDFromHREF } from './navigation';
 import MODE from './mode';
 import { mergeTables, removeHeadings } from './standings';
 
@@ -21,6 +21,12 @@ export default async function mutateContent(doc, mutatePageLinks, url) {
     <div id="main-content"></div>
   `)
 
+  const page = location.pageURLMap.get(url);
+  if (page) {
+    mainContent.classList.add(page);
+  }
+
+
   const pageLinksTable = contentContainer.querySelector('table:first-child');
   let pageLinksTabs;
   if (pageLinksTable) {
@@ -29,9 +35,29 @@ export default async function mutateContent(doc, mutatePageLinks, url) {
     contentContainer.removeChild(pageLinksTable);
   }
 
-  const page = location.pageURLMap.get(url);
-  if (page) {
-    mainContent.classList.add(page);
+  const sticky = document.createElement('div')
+  sticky.classList.add('qb-stats-plus-sticky')
+
+  mainContent.appendChild(sticky);
+
+  if (location.reportMap) {
+    const reportID = reportIDFromHREF(url);
+
+    const reportSelect = el(html`
+      <div class="select">
+        <select class="report-select">
+          ${Array.from(location.reportMap).map(([id, name]) => html`
+            <option value=${id} selected=${reportID === id}>${name}</option>
+          `)}
+        </select>
+      </div>
+    `)
+    
+    reportSelect.firstChild.addEventListener("change", event => {
+      navigate(event.target.value, undefined, true);
+    })
+
+    sticky.addChild(reportSelect);
   }
 
   contentContainer.insertBefore(mainContent, contentContainer.firstChild);
@@ -46,9 +72,35 @@ export default async function mutateContent(doc, mutatePageLinks, url) {
   
     switch (t = next.tagName) {
       case "TABLE":
+        if (table.classList.contains("phaseLegend")) {
+          mainContent.appendChild(table.cloneNode(true));
+          break;
+        }
+
+        if (table.style.position === "sticky") {
+          const links = Array.from(table.querySelectorAll("td > a[href]"))
+      
+          sticky.insertBefore(el(html`
+            <div class="round-links-container">
+              <div class="tabs is-right is-toggle round-links">
+                <ul>
+                  ${links.map(a => html`
+                    <li data-is-active-hash=${new URL(a.href).hash}>
+                      <a href=${a.href} data-navigate>${a.textContent}</a>
+                    </li>
+                  `)}
+                </ul>
+              </div>
+          </div>
+          `), sticky.firstChild);
+
+          break;
+        }    
+
         let sortMode = "sort";
         if (page === "individuals") sortMode = "rerankFirst";
         if (page === "statKey") sortMode = "none";
+  
         mainContent.appendChild(await transformTable(next, page !== "stat-key", sortMode))
         break
       case "H1":
@@ -72,6 +124,7 @@ export default async function mutateContent(doc, mutatePageLinks, url) {
   if (mutatePageLinks) {
     contentContainer.insertBefore(pageLinksTabs, mainContent);
   }
+
 
   if (page === "standings") {
     const containers = mainContent.querySelectorAll("div.table-container");

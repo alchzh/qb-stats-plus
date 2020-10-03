@@ -19,13 +19,6 @@ export function reportIDFromHREF (href) {
   return href?.match?.(HSQUIZBOWL_URL_REGEX)?.[2];
 }
 
-export function mapReports (reports) {
-  return new Set(
-    Array.from(reports)
-      .map(a => reportIDFromHREF(a.href))
-  )
-}
-
 
 export function stripHash(href) {
   const url = new URL(href.href ?? href, document.baseURI);
@@ -49,7 +42,7 @@ export const location = {
     return pageURLMap.get(this.currentPageURL)
   },
 
-  reportURLMap: null,
+  reportMap: null,
   get currentReport() {
     const match = window.location.href.match(HSQUIZBOWL_URL_REGEX);
     return match ? `${match[2]}` : null;
@@ -65,7 +58,7 @@ export default fetch = new URL(window.location.href).protocol.toLowerCase() === 
 export async function navigate(to, pageURLMap, isReport) {
   let url, hash;
   if (isReport) {
-    if (!location.reportURLMap.has(to)) return;
+    if (!location.reportMap.has(to)) return;
 
     const match = window.location.href.match(HSQUIZBOWL_URL_REGEX);
     if (!match) return

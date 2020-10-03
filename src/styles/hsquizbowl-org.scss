@@ -1,5 +1,12 @@
-select.report-select {
+.select {
   display: inline;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 4px;
+
+  select {
+    display: inline;
+  }
 }
 
 .tabs A:link, .tabs A:visited {
