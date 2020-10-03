@@ -1,0 +1,47 @@
+@charset "utf-8";
+
+@import "bulma.scss";
+@import "yellowfruit.scss";
+@import "hsquizbowl-org.scss";
+@import "tablesort.scss";
+
+#main-content {
+  @include block;
+}
+
+.qbsplus-content-container  {
+  br {
+    display: none;
+  }
+
+  font + br, font br {
+    display: block;
+  }
+
+  > .scoreboard {
+    p + p {
+      margin-top: 1rem;
+    }
+
+    .table-container {
+      margin-bottom: 0.5em;
+    }
+
+    br + br + br + div + h3, p + font {
+      margin-top: 2em;
+      display: block;
+    }
+  }  
+
+  > .stat-key {
+    p + p + h2 {
+      margin-top: 1.5rem;
+    }
+  }
+
+  > .standings {
+    .merge-button {
+      margin-left: 10px;
+    }
+  }
+}

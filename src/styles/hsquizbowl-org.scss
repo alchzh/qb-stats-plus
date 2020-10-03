@@ -1,0 +1,24 @@
+select.report-select {
+  display: inline;
+}
+
+.tabs A:link, .tabs A:visited {
+  text-decoration: none !important;
+}
+
+.MainHeader, .Navigation, .SQBSHeader {
+  font-size: 10pt;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h6 {
+    font-size: unset;
+    font-weight: bolder;
+  }
+}
+
+body {
+  margin: 8px;
+}

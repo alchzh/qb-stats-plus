@@ -1,9 +1,13 @@
-import optionsStorage from './options-storage';
+import optionsStorage from '../js/options-storage';
 
 optionsStorage.syncForm('#options-form');
 
-const rangeInputs = [...document.querySelectorAll('input[type="range"][name^="color"]')];
-const numberInputs = [...document.querySelectorAll('input[type="number"][name^="color"]')];
+const rangeInputs = [
+	...document.querySelectorAll('input[type="range"][name^="color"]')
+];
+const numberInputs = [
+	...document.querySelectorAll('input[type="number"][name^="color"]')
+];
 const output = document.querySelector('.color-output');
 
 function updateColor() {
@@ -11,7 +15,8 @@ function updateColor() {
 }
 
 function updateInputField(event) {
-	numberInputs[rangeInputs.indexOf(event.currentTarget)].value = event.currentTarget.value;
+	numberInputs[rangeInputs.indexOf(event.currentTarget)].value =
+		event.currentTarget.value;
 }
 
 for (const input of rangeInputs) {

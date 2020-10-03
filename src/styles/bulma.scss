@@ -1,0 +1,40 @@
+// Utilities
+@import "~bulma/sass/utilities/_all.sass";
+
+// Main styling
+$text: $grey-darker;
+$size-1: 2rem;
+$size-2: 1.5rem;
+$size-3: 1.2rem;
+$sizes: $size-1 $size-2 $size-3 $size-4 $size-5 $size-6 $size-7;
+@import "~bulma/sass/base/minireset.sass";
+@import "bulma_generic.scss";
+
+@import "~bulma/sass/elements/container.sass";
+
+$table-cell-padding: 0.2em 0.6em;
+$table-striped-row-even-background-color : $scheme-main-ter;
+$table-striped-row-even-hover-background-color : $scheme-main-ter;
+@import "~bulma/sass/elements/table.sass";
+@import "~bulma/sass/elements/title.sass";
+@import "~bulma/sass/elements/button.sass";
+@import "~bulma/sass/components/tabs.sass";
+@import "~bulma/sass/form/shared.sass";
+@import "~bulma/sass/form/select.sass";
+
+.tabs.is-toggle a:not(.is-active) {
+  background-color: $scheme-main-bis;
+}
+
+.tabs a {
+  outline: none;
+}
+
+.table-container {
+  @extend %block; 
+  @include overflow-touch;
+
+  overflow: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}

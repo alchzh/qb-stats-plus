@@ -1,0 +1,11 @@
+[
+  {
+    "input" : ["src/logo.svg"],
+    "output": [
+      ["dist/logos/logo-128.png", "pad", "128:128"],
+      ["dist/logos/logo-64.png", "pad", "64:64"],
+      ["dist/logos/logo-48.png", "pad", "48:48"],
+      ["dist/logos/logo-32.png", "pad", "32:32"]
+    ]
+  }
+]

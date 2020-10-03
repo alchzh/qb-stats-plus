@@ -1,0 +1,38 @@
+th[role=columnheader][data-sort-method]:not([data-sort-method="none"]) {
+  cursor: pointer;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: #404040 transparent;
+    visibility: hidden;
+    opacity: 0;
+    user-select: none;
+    transform: translate(0, -40%);
+  }
+
+  &[align=right]:after {
+    left: 5px;
+    right: auto;
+  }
+
+  &[aria-sort]:after {
+    visibility: visible;
+    opacity: 0.4;
+  }
+
+  &[aria-sort=ascending]:after {
+    border-bottom: none;
+    border-width: 4px 4px 0;    
+  }
+
+  &:hover:after {
+    visibility: visible;
+    opacity: 1;
+  }
+}

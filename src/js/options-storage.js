@@ -6,8 +6,6 @@ export default new OptionsSync({
 		colorGreen: 67,
 		colorBlue: 54
 	},
-	migrations: [
-		OptionsSync.migrations.removeUnused
-	],
+	migrations: [OptionsSync.migrations.removeUnused],
 	logging: true
 });
