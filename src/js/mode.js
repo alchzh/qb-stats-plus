@@ -1,6 +1,4 @@
-import {HSQUIZBOWL_URL_REGEX} from './patterns';
-
-export const MODE = HSQUIZBOWL_URL_REGEX.test(window.location.href) ?
+export const MODE = document.querySelector('.Container > .OverallBody > .MainHeader') ?
 	'hsquizbowl' :
 	'raw';
 

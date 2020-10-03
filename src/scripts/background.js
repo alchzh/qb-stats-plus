@@ -16,7 +16,6 @@ function loadIntoTab(id) {
 function onUpdated(tabId, changeInfo) {
 	if (changeInfo.url) {
 		const newURL = stripHash(changeInfo.url).url?.href;
-
 		if (pageURLMaps?.get(tabId)?.has(newURL)) {
 			browser.tabs.executeScript(tabId, {
 				file: '/browser-polyfill.min.js'

@@ -3,6 +3,7 @@ import h from 'vhtml';
 
 import {HSQUIZBOWL_URL_REGEX} from './patterns';
 import {reportIDFromHREF} from './navigation';
+import {LOCAL} from './mode';
 
 export function mapReports(reports) {
 	return new Map(
@@ -13,6 +14,10 @@ export function mapReports(reports) {
 
 export default async function generateReportMap(SQBSHeader) {
 	if (!SQBSHeader) {
+		return;
+	}
+
+	if (LOCAL) {
 		return;
 	}
 
