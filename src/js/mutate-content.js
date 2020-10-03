@@ -1,183 +1,160 @@
+/* global html */
 // eslint-disable-next-line no-unused-vars
 import h from 'vhtml';
-import transformPageLinks from '../js/transform-page-links';
-import transformTable from '../js/transform-table';
-import el from "./html-to-element";
-import htm from 'htm';
+import el from './html-to-element';
 
-import { navigate, location, _pageCache, reportIDFromHREF } from './navigation';
-import MODE from './mode';
-import { mergeTables, removeHeadings } from './standings';
+import transformPageLinks from './transform-page-links';
+import transformTable from './transform-table';
 
-const html = htm.bind(h);
+import {navigate, location, reportIDFromHREF} from './navigation';
+import {MODE} from './mode';
+import {addMergeUnmerge} from './standings';
 
 export default async function mutateContent(doc, mutatePageLinks, url) {
-  const contentContainer = MODE === 'hsquizbowl' ? doc.querySelector('.ContentContainer') : doc.body;
+	const contentContainer = MODE === 'hsquizbowl' ? doc.querySelector('.ContentContainer') : doc.body;
 
-  contentContainer.classList.add("qbsplus-content-container")
-  contentContainer.classList.add('container')
+	contentContainer.classList.add('qbsplus-content-container');
+	contentContainer.classList.add('container');
 
-  let mainContent = el(html`
+	const mainContent = el(html`
     <div id="main-content"></div>
-  `)
+  `);
 
-  const page = location.pageURLMap.get(url);
-  if (page) {
-    mainContent.classList.add(page);
-  }
+	const pageLinksTable = contentContainer.querySelector('table:first-child');
+	let pageLinksTabs;
+	if (pageLinksTable) {
+		pageLinksTabs = await transformPageLinks(pageLinksTable, 'page');
 
+		pageLinksTable.remove();
+	}
 
-  const pageLinksTable = contentContainer.querySelector('table:first-child');
-  let pageLinksTabs;
-  if (pageLinksTable) {
-    pageLinksTabs = await transformPageLinks(pageLinksTable, "page");
+	const page = location.pageURLMap.get(url);
+	if (page) {
+		mainContent.classList.add(page);
+	}
 
-    contentContainer.removeChild(pageLinksTable);
-  }
+	const stickyContainer = el(html`
+		<div class="qb-stats-plus-sticky-container">
+			<div class="qb-stats-plus-sticky"></div>
+		</div>
+	`);
 
-  const sticky = document.createElement('div')
-  sticky.classList.add('qb-stats-plus-sticky')
+	const sticky = stickyContainer.firstChild;
 
-  mainContent.appendChild(sticky);
+	mainContent.append(stickyContainer);
 
-  if (location.reportMap) {
-    const reportID = reportIDFromHREF(url);
+	if (location.reportMap) {
+		const reportID = reportIDFromHREF(url);
 
-    const reportSelect = el(html`
-      <div class="select">
-        <select class="report-select">
+		const reportSelect = el(html`
+      <div class="report-select select is-link">
+        <select>
           ${Array.from(location.reportMap).map(([id, name]) => html`
             <option value=${id} selected=${reportID === id}>${name}</option>
           `)}
         </select>
       </div>
-    `)
-    
-    reportSelect.firstChild.addEventListener("change", event => {
-      navigate(event.target.value, undefined, true);
-    })
+    `);
 
-    sticky.addChild(reportSelect);
-  }
+		reportSelect.firstChild.addEventListener('change', event => {
+			navigate(event.target.value, undefined, true);
+		});
 
-  contentContainer.insertBefore(mainContent, contentContainer.firstChild);
+		sticky.append(reportSelect);
+	}
 
-  let next;
-  let t;
-  while (next = mainContent.nextSibling) {
-    if (next.firstElementChild?.tagName === "TABLE") {
-      next = next.firstElementChild;
-      t = "TABLE";
-    }
-  
-    switch (t = next.tagName) {
-      case "TABLE":
-        if (table.classList.contains("phaseLegend")) {
-          mainContent.appendChild(table.cloneNode(true));
-          break;
-        }
+	contentContainer.insertBefore(mainContent, contentContainer.firstChild);
 
-        if (table.style.position === "sticky") {
-          const links = Array.from(table.querySelectorAll("td > a[href]"))
-      
-          sticky.insertBefore(el(html`
-            <div class="round-links-container">
-              <div class="tabs is-right is-toggle round-links">
-                <ul>
-                  ${links.map(a => html`
-                    <li data-is-active-hash=${new URL(a.href).hash}>
-                      <a href=${a.href} data-navigate>${a.textContent}</a>
-                    </li>
-                  `)}
-                </ul>
-              </div>
-          </div>
+	let next;
+	let t;
+	while (next = mainContent.nextSibling) {
+		if (next.firstElementChild?.tagName === 'TABLE') {
+			next = next.firstElementChild;
+			t = 'TABLE';
+		}
+
+		switch (t = next.tagName) {
+			case 'TABLE': {
+				if (next.classList.contains('phaseLegend')) {
+					mainContent.append(next.cloneNode(true));
+					break;
+				}
+
+				if (next.style.position === 'sticky') {
+					const links = Array.from(next.querySelectorAll('td > a[href]'));
+
+					sticky.insertBefore(el(html`
+						<div class="round-links-container">
+							<div class="tabs is-right is-toggle round-links">
+								<ul>
+									${links.map(a => html`
+										<li data-is-active-hash=${new URL(a.href).hash}>
+											<a href=${a.href} data-navigate>${a.textContent}</a>
+										</li>
+									`)}
+								</ul>
+							</div>
+					</div>
           `), sticky.firstChild);
 
-          break;
-        }    
+					break;
+				}
 
-        let sortMode = "sort";
-        if (page === "individuals") sortMode = "rerankFirst";
-        if (page === "statKey") sortMode = "none";
-  
-        mainContent.appendChild(await transformTable(next, page !== "stat-key", sortMode))
-        break
-      case "H1":
-      case "H2":
-      case "H3":
-      case "H4":
-      case "H5":
-      case "H6":
-        const _next = next.cloneNode(true);
-        _next.classList.add("title");
-        _next.classList.add(`is-${+t.substring(1)}`)
-        mainContent.appendChild(_next)
-        break;
-      default:
-        mainContent.appendChild(next.cloneNode(true));
-    }
+				let sortMode = 'sort';
+				if (page === 'individuals') {
+					sortMode = 'rerankFirst';
+				}
 
-    next.parentElement?.removeChild?.(next);
-  }
+				if (page === 'statKey') {
+					sortMode = 'none';
+				}
 
-  if (mutatePageLinks) {
-    contentContainer.insertBefore(pageLinksTabs, mainContent);
-  }
+				// eslint-disable-next-line no-await-in-loop
+				mainContent.append(await transformTable(next, page !== 'stat-key', sortMode));
+				break;
+			}
 
+			case 'H1':
+			case 'H2':
+			case 'H3':
+			case 'H4':
+			case 'H5':
+			case 'H6': {
+				const _next = next.cloneNode(true);
+				_next.classList.add('title');
+				_next.classList.add(`is-${Number(t.slice(1))}`);
+				mainContent.append(_next);
+				break;
+			}
 
-  if (page === "standings") {
-    const containers = mainContent.querySelectorAll("div.table-container");
-    if (containers.length > 1) {
-      const button = el(html`
-        <button class="button is-danger is-light merge-button">Merge</button>
-      `)
+			default:
+				mainContent.append(next.cloneNode(true));
+		}
 
-      if (!mainContent.querySelector("h1")?.appendChild?.(button)) {
-        mainContent.insertBefore(button, mainContent.firstChild)
-      }
+		next?.remove();
+	}
 
-      let isMerged = false;
-      let mergedHTML;
-      let unmergedHTML = mainContent.innerHTML;
+	if (mutatePageLinks) {
+		mainContent.before(pageLinksTabs);
+	}
 
-      function buttonClick (event) {
-        if (isMerged) {
-          console.log("Using found unmerged HTML")
-          mainContent.innerHTML = unmergedHTML;
-          isMerged = false;
-        } else if (mergedHTML) {
-          console.log("Using found merged HTML")
-          mainContent.innerHTML = mergedHTML;
-          isMerged = true;
-        } else {
-          try {
-            mergeTables(mainContent.querySelectorAll("div.table-container"));
-            removeHeadings(mainContent);
-          } catch (e) {
-            console.error(e)
-            console.error(e.stack)
-          }
-          event.target.innerHTML = "Unmerge";
+	if (page === 'standings') {
+		addMergeUnmerge(mainContent);
+	}
 
-          mergedHTML = mainContent.innerHTML;
-          isMerged = true;
-        }
+	contentContainer.querySelectorAll('a[name]').forEach(a => {
+		a.addEventListener('click', event => {
+			event.preventDefault();
+			window.location.hash = '#' + a.name;
+		});
+	});
 
-        document.querySelector("button.button")?.addEventListener("click", buttonClick);
-      }
+	contentContainer.querySelectorAll('a[href]').forEach(a => {
+		a.addEventListener('click', event => {
+			event.preventDefault();
+			navigate(a.href);
+		});
+	});
 
-      button.addEventListener("click", buttonClick);
-    }
-  }
-
-  contentContainer.querySelectorAll('a[name]').forEach(a => {
-    a.addEventListener('click', e => { e.preventDefault(); window.location.hash = "#" + a.name });
-  })
-
-  contentContainer.querySelectorAll('a[href]').forEach(a => {
-    a.addEventListener('click', e => { e.preventDefault(); navigate(a.href) });
-  })
-
-  return mainContent;
+	return mainContent;
 }

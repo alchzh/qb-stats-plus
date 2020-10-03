@@ -1,17 +1,9 @@
 table.phaseLegend {
   width: unset;
-}
+  z-index: 10;
 
-.round-links-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-
-  .round-links {
-    position: sticky;
-    top: 4px;
-    pointer-events: all;
+  &:hover {
+    opacity: 0.1;
   }
 }
 

@@ -29,7 +29,8 @@
 			"dist"
 		],
 		"rules": {
-			"import/no-unassigned-import": "off"
+			"import/no-unassigned-import": "off",
+			"no-cond-assign": "off"
 		},
 		"settings": {
 			"import/resolver": {
@@ -42,9 +43,9 @@
 		"extends": "stylelint-config-xo"
 	},
 	"dependencies": {
-		"bidirectional-map": "^1.0.4",
 		"bulma": "^0.9.1",
 		"htm": "^3.0.4",
+		"lodash.debounce": "^4.0.8",
 		"tablesort": "^5.2.1",
 		"vhtml": "^2.2.0",
 		"webext-options-sync": "^0.21.2",

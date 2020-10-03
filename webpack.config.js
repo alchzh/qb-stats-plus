@@ -22,15 +22,15 @@ module.exports = {
 				loader: 'babel-loader'
 			},
 			{
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          'css-loader',
-          'sass-loader'
-        ],
-      }
+				test: /\.(sa|sc|c)ss$/,
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader
+					},
+					'css-loader',
+					'sass-loader'
+				]
+			}
 		]
 	},
 	output: {
@@ -50,16 +50,16 @@ module.exports = {
 			}
 		]),
 		new MiniCssExtractPlugin({
-      filename: '[name].css',
+			filename: '[name].css'
 		}),
 		{
-      apply(compiler) {
-        compiler.hooks.shouldEmit.tap('Remove styles from output', (compilation) => {
-          delete compilation.assets['statsplus.js'];
-          return true;
-        })
-      }
-    }
+			apply(compiler) {
+				compiler.hooks.shouldEmit.tap('Remove styles from output', compilation => {
+					delete compilation.assets['statsplus.js'];
+					return true;
+				});
+			}
+		}
 	],
 	optimization: {
 		minimizer: [
