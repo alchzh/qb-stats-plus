@@ -26,11 +26,11 @@ export function removeHeadings(element) {
 function empty(parent) {
 	while (parent.hasChildNodes()) {
 		parent.firstChild.remove();
-	}	
+	}
 }
 
-function addAllFrom (parent, nodeList) {
-	nodeList.forEach(node => parent.append(node.cloneNode(true)))
+function addAllFrom(parent, nodeList) {
+	nodeList.forEach(node => parent.append(node.cloneNode(true)));
 }
 
 export function addMergeUnmerge(mainContent) {
@@ -45,10 +45,10 @@ export function addMergeUnmerge(mainContent) {
 		}
 
 		let isMerged = false;
-		let states = {
+		const states = {
 			merged: null,
 			unmerged: mainContent.cloneNode(true).childNodes
-		}
+		};
 
 		// eslint-disable-next-line no-inner-declarations
 		function buttonClick(event) {

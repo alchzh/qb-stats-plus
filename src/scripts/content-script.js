@@ -34,7 +34,7 @@ import {splitURL} from '../js/url-tools';
 			updateActive();
 			populateScrollOffsets(mainContent);
 
-			window.history.replaceState({page: url.href + hash, pageURLMap: location.pageURLMap}, "", url.href + hash);
+			window.history.replaceState({page: url.href + hash, pageURLMap: location.pageURLMap}, '', url.href + hash);
 
 			window.addEventListener('scroll', debounce(updateHashOnScroll, 1000));
 
