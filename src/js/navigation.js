@@ -110,7 +110,7 @@ export async function navigate(to, pageURLMap, isReport) {
 
 			if (!pageURLMap) {
 				try {
-					window.history.pushState({page: url.href + hash, pageURLMap: location.pageURLMap}, null, url.href + hash);
+					window.history.pushState({page: url.href + hash, pageURLMap: location.pageURLMap}, "", url.href + hash);
 
 					// eslint-disable-next-line require-atomic-updates
 					location._forcePage = null;

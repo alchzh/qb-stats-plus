@@ -30,9 +30,11 @@ import {splitURL} from '../js/url-tools';
 				window.location.hash = scrollToHashIn(hash, mainContent);
 			}
 
-			_pageCache.set(url, mainContent);
+			_pageCache.set(url.href, mainContent);
 			updateActive();
 			populateScrollOffsets(mainContent);
+
+			window.history.replaceState({page: url.href + hash, pageURLMap: location.pageURLMap}, "", url.href + hash);
 
 			window.addEventListener('scroll', debounce(updateHashOnScroll, 1000));
 
